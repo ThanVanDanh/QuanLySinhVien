@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Sinh Viên</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f0f8ff; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
+        th { background-color: #cceeff; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<h1>Quản Lý Sinh Viên</h1>
+
+<div>
+    <input type="text" id="search" placeholder="Tìm kiếm sinh viên...">
+    <button onclick="searchStudent()">Tìm kiếm</button>
+</div>
+
+<div>
+    <input type="text" id="studentName" placeholder="Tên sinh viên">
+    <input type="text" id="studentID" placeholder="Mã sinh viên">
+    <button onclick="addStudent()">Thêm sinh viên</button>
+</div>
+
+<table id="studentTable">
+    <thead>
+        <tr>
+            <th>Mã sinh viên</th>
+            <th>Tên sinh viên</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<script>
+    let students = [];
+
+    function addStudent() {
+        const name = document.getElementById('studentName').value;
+        const id = document.getElementById('studentID').value;
+
+        if (name && id) {
+            students.push({ id, name });
+            renderTable();
+            document.getElementById('studentName').value = '';
+            document.getElementById('studentID').value = '';
+        } else {
+            alert('Vui lòng nhập đầy đủ thông tin.');
+        }
+    }
+
+    function renderTable() {
+        const tableBody = document.querySelector('#studentTable tbody');
+        tableBody.innerHTML = '';
+
+        students.forEach((student, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${student.id}</td>
+                <td>${student.name}</td>
+                <td>
+                    <button onclick="editStudent(${index})">Sửa</button>
+                    <button onclick="deleteStudent(${index})">Xóa</button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    function editStudent(index) {
+        const student = students[index];
+        document.getElementById('studentName').value = student.name;
+        document.getElementById('studentID').value = student.id;
+
+        deleteStudent(index);
+    }
+
+    function deleteStudent(index) {
+        students.splice(index, 1);
+        renderTable();
+    }
+
+    function searchStudent() {
+        const query = document.getElementById('search').value.toLowerCase();
+        const filteredStudents = students.filter(student =>
+            student.name.toLowerCase().includes(query) ||
+            student.id.toLowerCase().includes(query)
+        );
+
+        const tableBody = document.querySelector('#studentTable tbody');
+        tableBody.innerHTML = '';
+
+        filteredStudents.forEach((student, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${student.id}</td>
+                <td>${student.name}</td>
+                <td>
+                    <button onclick="editStudent(${index})">Sửa</button>
+                    <button onclick="deleteStudent(${index})">Xóa</button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+</script>
+
+</body>
+</html>
